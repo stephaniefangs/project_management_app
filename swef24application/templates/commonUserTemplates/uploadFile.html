@@ -1,0 +1,156 @@
+{% load static %} {% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {% bootstrap_css %}
+    <link rel="stylesheet" href="{% static 'myeventsapp/styles.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@450&display=swap"
+      rel="stylesheet"
+    />
+    <title>File Upload</title>
+  </head>
+  <body>
+    <div class="backButton">
+      <a href="{% url 'event_detail' event_id=event_id %}" class="no-underline"
+        >Go Back</a
+      >
+    </div>
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="custom-container">
+            <h2 class="text-center mb-4">Upload Files</h2>
+            <form method="post" enctype="multipart/form-data" class="mb-4">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="document" class="form-label">Select File</label>
+                <input
+                  type="file"
+                  name="document"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="file_title" class="form-label">File Title</label>
+                <input
+                  type="text"
+                  name="file_title"
+                  class="form-control"
+                  required
+                  placeholder="Enter a title for this file"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="description" class="form-label"
+                  >File Description</label
+                >
+                <textarea
+                  name="description"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Example: This file contains the meeting minutes for Oct. 21, 2024."
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="keywords" class="form-label"
+                  >Keywords (comma-separated)</label
+                >
+                <input
+                  type="text"
+                  name="keywords"
+                  class="form-control"
+                  placeholder="Example: Minutes, Event Planning, Map"
+                />
+              </div>
+              <button type="submit" class="btn btn-success">Upload file</button>
+            </form>
+
+            {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+            {% endif %} {% if url %}
+            <div class="file-preview">
+                {% if file_type == 'image' %}
+                    <h4>File Preview:</h4>
+                    <img src="{{ url }}" alt="Uploaded image" class="img-fluid" />
+                {% elif file_type == 'pdf' %}
+                    <h4>File Preview:</h4>
+                    <iframe src="{{ url }}"></iframe>
+                {% elif file_type != 'text' %}
+                    <h4>File Preview:</h4>
+                    <p>Preview not available for this file type</p>
+                    <a href="{{ url }}" class="btn btn-primary" target="_blank">Download File</a>
+                {% endif %}
+            </div>
+            {% endif %} {% if uploaded_files %}
+            <div class="mt-4">
+              <h3>Uploaded Files:</h3>
+              <ul class="file-list">
+                {% for file in uploaded_files %}
+                <li
+                  class="preview-item"
+                  data-url="{{ file.url }}"
+                  data-type="{{ file.type }}"
+                >
+                  {% if file.type == 'image' %} 🖼️ {% elif file.type == 'pdf' %}
+                  📄 {% elif file.type == 'text' %} 📝 {% else %} 📎 {% endif %}
+                  <div class="file-info">
+                    <strong>{{ file.title }}</strong>
+                    <div class="file-metadata">
+                      <p>{{ file.description }}</p>
+                      <small>Keywords: {{ file.keywords }}</small><br />
+                    </div>
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".preview-item").forEach((item) => {
+          item.addEventListener("click", function () {
+            const url = this.dataset.url;
+            const type = this.dataset.type;
+            const previewDiv =
+              document.querySelector(".file-preview") ||
+              createElement("div", "file-preview");
+    
+            let content;
+            if (type === "image") {
+              content = `
+                <h4>File Preview:</h4>
+                <img src="${url}" alt="Preview" class="img-fluid">`;
+            } else if (type === "pdf") {
+              content = `
+                <h4>File Preview:</h4>
+                <iframe src="${url}"></iframe>`;
+            } else if (type === "text") {
+              content = `<a href="${url}" class="preview-btn" target="_blank">Open Text File</a>`;
+            } else {
+              content = `
+                <h4>File Preview:</h4>
+                <a href="${url}" class="preview-btn" target="_blank">Open File</a>`;
+            }
+    
+            previewDiv.innerHTML = content;
+    
+            if (!document.querySelector(".file-preview")) {
+              document.querySelector("form").after(previewDiv);
+            }
+          });
+        });
+      });
+    </script>
+    {% include 'commonUserTemplates/footer.html' %}
+  </body>
+</html>

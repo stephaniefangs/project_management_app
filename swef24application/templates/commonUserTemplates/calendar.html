@@ -1,0 +1,58 @@
+<!-- 
+ Sources:
+ - FullCalendar: https://fullcalendar.io/ 
+ -->
+
+{% load static %} {% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% bootstrap_css %}
+    <link rel="stylesheet" href="{% static 'myeventsapp/styles.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@450&display=swap"
+      rel="stylesheet"
+    />
+   <link
+      href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js"></script>
+</head>
+<body>
+  <div class="mainDiv">
+      <h1>Welcome to the Calendar</h1>
+      <div id="calendar"></div>
+      <div class="backButton">
+        {% if user.is_authenticated %}
+        <a href="{% url 'login_redirect' %}" class="no-underline">Go Back</a>
+        {% else %}
+        <a href="{% url 'anonymousPage' %}" class="nav-underline">Go Back</a>
+        {% endif %}
+
+      </div>
+      <script id="events-data">
+          {{ events|safe }}
+      </script>
+      <script src="{% static 'myeventsapp/calendar.js' %}"></script>
+
+      <div class="help-button" onclick="toggleHelp()">?</div>
+    <div class="help-popup" id="helpPopup">
+      <span class="help-close" onclick="toggleHelp()">×</span>
+      <div class="help-popup-content">
+        This is the calendar page. Here you can view events in a tabluar format. Some events
+        will have an associated URL, meaning you can click on the event and be navigated to a different
+        website. You can also click between month, week, and day to see the CIO event schedule in different
+        views.
+      </div>
+    </div>
+
+  </div>
+  {% include 'commonUserTemplates/footer.html' %}
+
+  <script src="{% static 'myeventsapp/help.js' %}"></script>
+</body>
+</html>

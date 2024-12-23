@@ -1,0 +1,172 @@
+{% load static %} {% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% bootstrap_css %}
+    <link rel="stylesheet" href="{% static 'myeventsapp/styles.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@450&display=swap"
+      rel="stylesheet"
+    />
+    <title>CIO Event App - Admin Dashboard</title>
+  </head>
+  <body>
+    <div class="mainDiv">
+      <h1>PMA Administrator Dashboard</h1>
+      <h2>Welcome, {{user.username}}!</h2>
+      <p>Here you can manage and moderate events and files.</p>
+
+      {% if events %}
+      <div class="files-section">
+        <h3>All Events</h3>
+        <ul class="file-list">
+          {% for event in events %}
+          <li class="file-item">
+            <div class="event-header">
+              <h2 class="event-title">{{ event.event_name }}</h2>
+              <form
+                method="POST"
+                action="{% url 'delete_event' event.id %}"
+                style="display: inline"
+              >
+                {% csrf_token %}
+                <button
+                  type="submit"
+                  class="submit-message-btn delete-action"
+                  onclick="return confirm('Are you sure you want to delete this event? This will also delete all associated files.')"
+                >
+                  Delete Event
+                </button>
+              </form>
+            </div>
+
+            <div class="file-metadata">
+              <p class="file-description">
+                <strong>Description:</strong> {{ event.description }}
+              </p>
+              <p><strong>Location:</strong> {{ event.location }}</p>
+              <p><strong>Start Time:</strong> {{ event.startTime }}</p>
+              <p><strong>End Time:</strong> {{ event.endTime }}</p>
+            </div>
+
+            {% if event.files.all %}
+            <div class="event-files">
+              <h4>Event Files:</h4>
+              {% for file in event.files.all %}
+              <div class="file-metadata">
+                <div class="file-header">
+                  {% if file.file_type == 'image' %} 🖼️ 
+                  {% elif file.file_type == 'pdf' %} 📄 
+                  {% elif file.file_type == 'text' %} 📝 
+                  {% else %} 📎 
+                  {% endif %}
+                  <strong>{{ file.file_title }}</strong>
+                </div>
+                <p>{{ file.description }}</p>
+                {% if file.keywords %}
+                  <p><strong>Keywords:</strong> {{ file.keywords }}</p>
+                {% endif %}
+                <p>
+                  <strong>Uploaded:</strong> {{ file.upload_timestamp|date:"M d, Y H:i" }}
+                </p>
+                <div class="file-actions">
+                  <button
+                    class="preview-btn"
+                    data-url="{{ file.s3_url }}"
+                    data-type="{{ file.file_type }}"
+                  >
+                    Preview File
+                  </button>
+                  <form
+                    method="POST"
+                    action="{% url 'delete_file' file.id %}"
+                    style="display: inline"
+                  >
+                    {% csrf_token %}
+                    <button
+                      type="submit"
+                      class="submit-message-btn delete-action"
+                      onclick="return confirm('Are you sure you want to delete this file?')"
+                    >
+                      Delete File
+                    </button>
+                  </form>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            <div id="filePreview" class="file-preview" style="display: none">
+              <h4>File Preview</h4>
+              <div id="previewContent" class="preview-content"></div>
+              <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="preview-btn">Close Preview</button>
+              </form>
+            </div>
+            {% else %}
+            <p class="no-messages">No files uploaded for this event.</p>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% else %}
+      <p class="no-messages">No events found in the system.</p>
+      {% endif %}
+
+      <div class="button-container">
+        <div class="backButton" style="position: fixed;">
+          <a href="{% url 'logoutPage' %}" class="no-underline">Logout</a>
+        </div>
+      </div>
+
+      <div class="help-button" onclick="toggleHelp()">?</div>
+      <div class="help-popup" id="helpPopup">
+        <span class="help-close" onclick="toggleHelp()">×</span>
+        <div class="help-popup-content">
+          This is the admin page. As an administrator, you have the ability to moderate
+          events by deleting either the event itself or its files. You cannot create or join projects.
+          In order to do so, you must login as a common user. 
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const previewDivs = document.querySelectorAll(".file-preview");
+        const previewContents = document.querySelectorAll(".preview-content");
+
+        document.querySelectorAll(".preview-btn").forEach((button) => {
+          button.addEventListener("click", function () {
+            const url = this.dataset.url;
+            const type = this.dataset.type;
+            const previewDiv =
+              this.closest(".file-item").querySelector(".file-preview");
+            const previewContent = previewDiv.querySelector(".preview-content");
+
+            let content = "";
+            if (type === "image") {
+              content = `<img src="${url}" alt="Preview" class="img-fluid">`;
+            } else if (type === "pdf") {
+              content = `<iframe src="${url}"></iframe>`;
+            } else {
+              content = `<a href="${url}" class="open-file-btn" target="_blank">Open File</a>`;
+            }
+
+            previewContent.innerHTML = content;
+            previewDiv.style.display = "block";
+            previewDiv.scrollIntoView({ behavior: "smooth" });
+          });
+        });
+      });
+    </script>
+    {% include 'commonUserTemplates/footer.html' %}
+
+    <script src="{% static 'myeventsapp/help.js' %}"></script>
+  </body>
+</html>

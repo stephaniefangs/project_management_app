@@ -1,0 +1,61 @@
+<!--
+Sources:
+- Django tutorial: How to authenticate using Google: https://www.youtube.com/watch?v=NG48CLLsb1A
+-->
+{% load static %} {% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  {% bootstrap_css %}
+  <link rel="stylesheet" href="{% static 'myeventsapp/styles.css' %}" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@450&display=swap" rel="stylesheet" />
+
+  <title>CIO Manager Sign In</title>
+</head>
+
+<body>
+  {% load socialaccount %}
+  <div class="mainDiv">
+    <h1>Welcome to the CIO Project Management Application!</h1>
+    <div class="subDiv">
+      <div class="imageDiv">
+        <img src="{% static 'gifs/loginPageGif.gif' %}" alt="Login Page GIF">
+      </div>
+
+      <div class="googleLoginDiv">
+        <div class="button-container-login">
+          <div class="login-buttons">
+            <a href="{% provider_login_url 'google' %}" class="login-button">Log in with Google</a>
+            <a href="{% url 'anonymousPage' %}" class="login-button">View Events as Anonymous</a>
+            <a href="/admin" class="login-button">Access Admin Page</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="help-button" onclick="toggleHelp()">?</div>
+    <div class="help-popup" id="helpPopup">
+      <span class="help-close" onclick="toggleHelp()">×</span>
+      <div class="help-popup-content">
+        Welcome to the CIO Project Management application! The purpose of this application is to be able to
+        view events from multiple CIOs and choose which events to participate in. Students can choose to either
+        only participate in events or also create some of their own too. Events will be regulated by administrators
+        to ensure that they adhere with university standards.
+      </div>
+    </div>
+  </div>
+  {% include 'commonUserTemplates/footer.html' %}
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'myeventsapp/help.js' %}"></script>
+</body>
+
+</html>

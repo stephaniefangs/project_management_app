@@ -1,0 +1,121 @@
+{% load static %} {% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {% bootstrap_css %}
+  <link rel="stylesheet" href="{% static 'myeventsapp/styles.css' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@450&display=swap" rel="stylesheet" />
+  <title>CIO Event App - Home</title>
+</head>
+
+<body>
+  <div class="mainDiv">
+    <div class="logoutButton">
+      <a href="{% url 'loginPage' %}" class="no-underline">Go Back</a>
+    </div>
+    <h1>Welcome to the CIO Event App</h1>
+    <p>You are currently an anonymous user. To view more details about events, please log in.</p>
+
+    <div class="eventsTable">
+      <h3>Events</h3>
+      <div class="main-divider"></div>
+      <h4>Current Events</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Event Description</th>
+            <th>Event Location</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Event Owner</th>
+            <th>URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for current_event in current_events %}
+          <tr>
+            <td>
+              <a>{{ current_event.event_name }}</a>
+            </td>
+            <td>
+              {{ current_event.description }}
+            </td>
+            <td>{{ current_event.location }}</td>
+            <td>{{ current_event.startTime }}</td>
+            <td>{{ current_event.endTime }}</td>
+            <td>{{ current_event.owner.first_name }} {{current_event.owner.last_name}}</td>
+            <td>
+              {{ current_event.url }}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td>No current events found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="sub-divider"></div>
+      <h4>Past Events</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Event Description</th>
+            <th>Event Location</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Event Owner</th>
+            <th>URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for past_event in past_events %}
+          <tr>
+            <td>
+              <a>{{ past_event.event_name }}</a>
+            </td>
+            <td>
+              {{ past_event.description }}
+            </td>
+            <td>{{ past_event.location }}</td>
+            <td>{{ past_event.startTime }}</td>
+            <td>{{ past_event.endTime }}</td>
+            <td>{{ past_event.owner.first_name }} {{past_event.owner.last_name}}</td>
+            <td>{{ past_event.url}}</td>
+          </tr>
+
+          {% empty %}
+          <tr>
+            <td>No past events found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="button-container">
+      <div class="openCalendarButton">
+        <a href="{% url 'calendar' %}" class="no-underline">Open Calendar</a>
+      </div>
+    </div>
+    <div class="help-button" onclick="toggleHelp()">?</div>
+    <div class="help-popup" id="helpPopup">
+      <span class="help-close" onclick="toggleHelp()">×</span>
+      <div class="help-popup-content">
+        This is the anonymous page. As an anonymous user, you can only view a list of
+        event titles and their owners. In order to access more information (such as event details),
+        you will need to login with a Google account.
+      </div>
+    </div>
+  </div>
+  {% include 'commonUserTemplates/footer.html' %}
+
+  <script src="{% static 'myeventsapp/help.js' %}"></script>
+</body>
+
+</html>

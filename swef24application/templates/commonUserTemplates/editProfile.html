@@ -1,0 +1,46 @@
+{% load static %} {% load django_bootstrap5 %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% bootstrap_css %}
+    <link rel="stylesheet" href="{% static 'myeventsapp/styles.css' %}" />
+    <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@450&display=swap" rel="stylesheet" />
+    <title>CIO Event App - Edit Profile</title>
+</head>
+<body>
+    <div class="mainDiv">
+        <div class="logoutButton">
+            <a href="{% url 'logoutPage' %}" class="no-underline">Logout</a>
+        </div>
+
+        <h1>Edit Profile</h1>
+
+        <div class="custom-container">
+            <div class="subFormContainer">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <label for="first_name">First Name</label>
+                    <input type="text" id="first_name" name="first_name" value="{{ user_account.first_name }}">
+
+                    <label for="last_name">Last Name</label>
+                    <input type="text" id="last_name" name="last_name" value="{{ user_account.last_name }}">
+
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" name="bio" rows="4">{{ user_account.bio }}</textarea>
+
+                    <div class="button-container">
+                        <div class="createEventButton" style="background-color: red;">
+                            <a href="{% url 'profile' %}" class="no-underline" style="color:white">Cancel</a>
+                        </div>
+                        <button type="submit" class="save-changes-btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% include 'commonUserTemplates/footer.html' %}
+</body>
+</html>

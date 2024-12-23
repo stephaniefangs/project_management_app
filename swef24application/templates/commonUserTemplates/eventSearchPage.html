@@ -1,0 +1,134 @@
+{% load static %} {% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {% bootstrap_css %}
+  <link rel="stylesheet" href="{% static 'myeventsapp/styles.css' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@450&display=swap" rel="stylesheet" />
+  <title>CIO Event App - Home</title>
+</head>
+
+<body>
+  <button class="menu-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu"
+    aria-controls="sideMenu">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="sideMenu" aria-labelledby="sideMenuLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="sideMenuLabel">Navigation</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div class="nav-links">
+        <a href="{% url 'profile' %}" class="nav-link">
+          <div class="nav-item">
+            View Profile
+          </div>
+        </a>
+        <a href="{% url 'my_events' %}" class="nav-link">
+          <div class="nav-item">
+            My Events
+          </div>
+        </a>
+        <a href="{% url 'search_events'%}" class = 'nav-link'>
+          <div class="nav-item">
+            Search for Events
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mainDiv">
+    <div class="backButton">
+      <a href="{% url 'homePage' %}" class="no-underline">Go Back</a>
+    </div>
+    <h1>
+        Search Event by Features:
+    </h1>
+    <div class="eventDetailInputDiv">
+        <form method="get">
+          <label for="event_name">Event Name:</label>
+          <input type="text" id="event_name" name="event_name" /><br /><br />
+          <label for="location">Location:</label>
+          <input type="text" id="location" name="location" /><br /><br />
+          <label for="startTime">Date and Start Time:</label>
+          <input type="datetime-local" id="startTime" name="startTime"/><br /><br />
+          <label for="endTime">Date and End Time:</label>
+          <input type="datetime-local" id="endTime" name="endTime"/><br /><br />
+          <label for="url">URL:</label>
+          <input type="text" id="url" name="url"/><br /><br />
+          <input type="submit" value="Submit" class="submit-button"/>
+        </form>
+    </div>
+    <div class="eventsTable">
+      <table>
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Event Location</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for event in events %}
+          <tr class="clickable-row">
+            <td colspan="1">
+              <a href="{% url 'event_detail' event.id %}" class="row-link">
+                <span class="event-name">{{ event.event_name }}</span>
+              </a>
+            </td>
+            <td colspan="1">
+              <a href="{% url 'event_detail' event.id %}" class="row-link">
+                <span class="event-location">{{ event.location }}</span>
+              </a>
+            </td>
+            <td colspan="1">
+              <a href="{% url 'event_detail' event.id %}" class="row-link">
+                <span class="event-time">{{ event.startTime }}</span>
+              </a>
+            </td>
+            <td colspan="1">
+              <a href="{% url 'event_detail' event.id %}" class="row-link">
+                <span class="event-time">{{ event.endTime }}</span>
+              </a>
+            </td>
+            <td colspan="1">
+              <a href="{% url 'event_detail' event.id %}" class="row-link">
+                <span class="event-url">{{ event.url }}</span>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5">No events found.</td>
+          </tr>
+          {% endfor %}
+         </tbody>
+      </table>
+    </div>
+    <div class="help-button" onclick="toggleHelp()">?</div>
+    <div class="help-popup" id="helpPopup">
+      <span class="help-close" onclick="toggleHelp()">×</span>
+      <div class="help-popup-content">
+        This is the search page where you can search for an event by 
+        a specific attribute such as name, location, etc. Only one 
+        of the fields need to be filled out in order to submit and
+        view what events are available. 
+      </div>
+    </div>
+  </div>
+
+  {% include 'commonUserTemplates/footer.html' %}
+  <script src="{% static 'myeventsapp/help.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

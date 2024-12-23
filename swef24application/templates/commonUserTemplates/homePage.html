@@ -1,0 +1,200 @@
+<!-- 
+ Sources:
+ - Offcanvas Sidebar: https://getbootstrap.com/docs/5.0/components/offcanvas/
+ - How to make a whole row in a table clickable as a link: https://stackoverflow.com/questions/17147821/how-to-make-a-whole-row-in-a-table-clickable-as-a-link
+ -->
+{% load static %} {% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {% bootstrap_css %}
+  <link rel="stylesheet" href="{% static 'myeventsapp/styles.css' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@450&display=swap" rel="stylesheet" />
+  <title>CIO Event App - Home</title>
+</head>
+
+<body>
+  <button class="menu-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu"
+    aria-controls="sideMenu">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="sideMenu" aria-labelledby="sideMenuLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="sideMenuLabel">Navigation</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div class="nav-links">
+        <a href="{% url 'profile' %}" class="nav-link">
+          <div class="nav-item">
+            View Profile
+          </div>
+        </a>
+        <a href="{% url 'my_events' %}" class="nav-link">
+          <div class="nav-item">
+            My Events
+          </div>
+        </a>
+        <a href="{% url 'search_events'%}" class = 'nav-link'>
+          <div class="nav-item">
+            Search for Events
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mainDiv">
+    <div class="logoutButton" style="position: fixed;">
+      <a href="{% url 'logoutPage' %}" class="no-underline">Logout</a>
+    </div>
+    <h1>Welcome to the CIO Event App</h1>
+    <h2>Hello, {{ user.username|capfirst }}!</h2>
+    <p>
+      Here you can view your projects, upcoming events, and manage your tasks.
+    </p>
+    <div class="eventsTable">
+      <h3>Events</h3>
+      <div class="main-divider"></div>
+      <h4>Current Events</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Event Description</th>
+            <th>Event Location</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for current_event in current_events %}
+          <tr class="clickable-row">
+            <td>
+              <a href="{% url 'event_detail' current_event.id %}" class="row-link">
+                <span class="event-name">{{ current_event.event_name }}</span>
+              </a>
+            </td>
+            <td>
+              <a href="{% url 'event_detail' current_event.id %}" class="row-link">
+                <span class="event-name">{{ current_event.description }}</span>
+              </a>
+            </td>
+            <td>
+              <a href="{% url 'event_detail' current_event.id %}" class="row-link">
+                <span class="event-location">{{ current_event.location }}</span>
+              </a>
+            </td>
+            <td>
+              <a href="{% url 'event_detail' current_event.id %}" class="row-link">
+                <span class="event-time">{{ current_event.startTime }}</span>
+              </a>
+            </td>
+            <td>
+              <a href="{% url 'event_detail' current_event.id %}" class="row-link">
+                <span class="event-time">{{ current_event.endTime }}</span>
+              </a>
+            </td>
+            <td>
+              <a href="{% url 'event_detail' current_event.id %}" class="row-link">
+                <span class="event-name">{{ current_event.url }}</span>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td>No current events found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="sub-divider"></div>
+      <h4>Past Events</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Event Description</th>
+            <th>Event Location</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for past_event in past_events %}
+          <tr class="clickable-row">
+            <td>
+              <a href="{% url 'event_detail' past_event.id %}" class="row-link">
+                <span class="event-name">{{ past_event.event_name }}</span>
+              </a>
+            </td>
+            <td>
+              <a href="{% url 'event_detail' past_event.id %}" class="row-link">
+                <span class="event-description">{{ past_event.description }}</span>
+              </a>
+            </td>
+            <td>
+              <a href="{% url 'event_detail' past_event.id %}" class="row-link">
+                <span class="event-location">{{ past_event.location }}</span>
+              </a>
+            </td>
+            <td>
+              <a href="{% url 'event_detail' past_event.id %}" class="row-link">
+                <span class="event-time">{{ past_event.startTime }}</span>
+              </a>
+            </td>
+            <td>
+              <a href="{% url 'event_detail' past_event.id %}" class="row-link">
+                <span class="event-time">{{ past_event.endTime }}</span>
+              </a>
+            </td>
+            <td>
+              <a href="{% url 'event_detail' past_event.id %}" class="row-link">
+                <span class="event-url">{{ past_event.url }}</span>
+              </a>
+            </td>
+
+          </tr>
+
+          {% empty %}
+          <tr>
+            <td>No past events found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="button-container">
+      <div class="createEventButton">
+        <a href="{% url 'create_event' %}" class="no-underline">Create Event</a>
+      </div>
+      <div class="openCalendarButton">
+        <a href="{% url 'calendar' %}" class="no-underline">Open Calendar</a>
+      </div>
+    </div>
+    <div class="help-button" onclick="toggleHelp()">?</div>
+    <div class="help-popup" id="helpPopup">
+      <span class="help-close" onclick="toggleHelp()">×</span>
+      <div class="help-popup-content">
+        This is your homepage. Here you can view all current and past events for various CIOs. 
+        Use the navigation menu to access your profile or view events that you are a part of (as an
+        owner or member). You can create new events using the "Create Event" button or join existing ones
+        through requesting. You can also open the calendar using the "Calendar" button to view events in 
+        a tabular format.
+      </div>
+    </div>
+  </div>
+  {% include 'commonUserTemplates/footer.html' %}
+
+  <script src="{% static 'myeventsapp/help.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

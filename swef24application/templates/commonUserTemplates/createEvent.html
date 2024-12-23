@@ -1,0 +1,50 @@
+{% load static %} {% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% bootstrap_css %}
+    <link rel="stylesheet" href="{% static 'myeventsapp/styles.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@450&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="mainDiv">
+      <h2 style="text-align: center">Event Form</h2>
+      <div class="subFormContainer">
+        <form method="post">
+          {% csrf_token %}
+           {% if form.non_field_errors %}
+            <div class="error-text" style="color:red; font-weight:bold, margin-bottom: 10px;">
+              {{ form.non_field_errors|join:" " }}
+            </div>
+          {% endif %}
+          <label for="event_name">Event Name:</label>
+          <input type="text" id="event_name" name="event_name" /><br /><br />
+          <label for="description">Event Description:</label>
+          <input type="text" id="description" name="description" /><br /><br />
+          <label for="location">Location:</label>
+          <input type="text" id="location" name="location" /><br /><br />
+
+          <label for="startTime">Date and Start Time:</label>
+          <input type="datetime-local" id="startTime" name="startTime"/><br /><br />
+          <label for="endTime">Date and End Time:</label>
+          <input type="datetime-local" id="endTime" name="endTime"/><br /><br />
+          <label for="url">URL:</label>
+          <input type="text" id="url" name="url"/><br /><br />
+          <input type="submit" value="Submit" />
+        </form>
+      </div>
+      <br />
+    </div>
+      <div class="backButton">
+        <a href="{% url 'homePage' %}" class="no-underline">Go Back</a>
+      </div>
+    </div>
+    {% include 'commonUserTemplates/footer.html' %}
+  </body>
+</html>
